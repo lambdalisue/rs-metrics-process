@@ -1,0 +1,25 @@
+[package]
+name = "metrics-process"
+version = "0.0.0"
+authors = ["Alisue <lambdalisue@gmail.com>"]
+edition = "2018"
+
+description = "metrics plugin to support prometheus process metrics"
+repository = "https://github.com/lambdalisue/rs-metrics-process"
+license = "MIT"
+readme = "README.md"
+keywords = ["metrics", "prometheus", "open-metrics", "process"]
+
+[package.metadata.docs.rs]
+all-features = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+metrics = "0.20.1"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+libproc = "0.12.0"
+rlimit = "0.8.3"
+
+[dev-dependencies]
