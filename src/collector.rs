@@ -1,6 +1,9 @@
 #[cfg(target_os = "macos")]
 mod macos;
 
+#[cfg(target_os = "linux")]
+mod linux;
+
 /// Process metrics
 /// https://prometheus.io/docs/instrumenting/writing_clientlibs/#process-metrics
 #[derive(Debug, Default, PartialEq)]
@@ -26,18 +29,31 @@ pub struct Metrics {
 #[cfg(target_os = "macos")]
 pub use macos::collect;
 
+#[cfg(target_os = "linux")]
+pub use linux::collect;
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
+    fn fibonacci(n: u64) -> u64 {
+        match n {
+            0 => 0,
+            1 => 1,
+            _ => fibonacci(n - 2) + fibonacci(n - 1),
+        }
+    }
+
     #[test]
     fn test_collect_internal_ok() {
+        fibonacci(40);
         let m = collect();
+        dbg!(&m);
         assert!(m.cpu_seconds_total > 0.0);
         assert!(m.open_fds > 0);
-        assert!(m.max_fds > 0);
+        //assert!(m.max_fds > 0); // maybe 'unlimited'
         assert!(m.virtual_memory_bytes > 0);
-        assert!(m.virtual_memory_max_bytes > 0);
+        //assert!(m.virtual_memory_max_bytes > 0); // maybe 'unlimited'
         assert!(m.resident_memory_bytes > 0);
         assert!(m.start_time_seconds > 0);
         assert!(m.threads > 0);
