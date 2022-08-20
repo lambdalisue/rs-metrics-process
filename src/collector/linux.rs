@@ -32,12 +32,14 @@ pub fn collect() -> Metrics {
             metrics.open_fds = fd_count as u64;
         }
         if let Ok(limit) = proc.limits() {
-            if let LimitValue::Value(v) = limit.max_open_files.soft_limit {
-                metrics.max_fds = v;
+            metrics.max_fds = match limit.max_open_files.soft_limit {
+                LimitValue::Value(v) => Some(v),
+                LimitValue::Unlimited => Some(0),
             };
-            if let LimitValue::Value(v) = limit.max_address_space.soft_limit {
-                metrics.virtual_memory_max_bytes = v;
-            }
+            metrics.virtual_memory_max_bytes = match limit.max_address_space.soft_limit {
+                LimitValue::Value(v) => Some(v),
+                LimitValue::Unlimited => Some(0),
+            };
         }
     }
     metrics
