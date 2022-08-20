@@ -27,10 +27,10 @@ pub fn collect() -> Metrics {
         }
     }
     if let Ok((soft, _hard)) = getrlimit(Resource::AS) {
-        metrics.virtual_memory_max_bytes = soft;
+        metrics.virtual_memory_max_bytes = Some(soft);
     }
     if let Ok((soft, _hard)) = getrlimit(Resource::NOFILE) {
-        metrics.max_fds = soft;
+        metrics.max_fds = Some(soft);
     }
     metrics
 }

@@ -73,8 +73,10 @@ impl Collector {
         if m.open_fds > 0 {
             gauge!(format!("{}process_open_fds", prefix), m.open_fds as f64);
         }
-        if m.max_fds > 0 {
-            gauge!(format!("{}process_max_fds", prefix), m.max_fds as f64);
+        if let Some(v) = m.max_fds {
+            if v > 0 {
+                gauge!(format!("{}process_max_fds", prefix), v as f64);
+            }
         }
         if m.virtual_memory_bytes > 0 {
             gauge!(
@@ -82,11 +84,13 @@ impl Collector {
                 m.virtual_memory_bytes as f64,
             );
         }
-        if m.virtual_memory_max_bytes > 0 {
-            gauge!(
-                format!("{}process_virtual_memory_max_bytes", prefix),
-                m.virtual_memory_max_bytes as f64,
-            );
+        if let Some(v) = m.virtual_memory_max_bytes {
+            if v > 0 {
+                gauge!(
+                    format!("{}process_virtual_memory_max_bytes", prefix),
+                    v as f64,
+                );
+            }
         }
         if m.resident_memory_bytes > 0 {
             gauge!(
