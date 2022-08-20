@@ -4,6 +4,10 @@ mod macos;
 #[cfg(target_os = "linux")]
 mod linux;
 
+#[cfg(target_os = "windows")]
+#[path = "collector/windows.rs"]
+mod win;
+
 /// Process metrics
 /// https://prometheus.io/docs/instrumenting/writing_clientlibs/#process-metrics
 #[derive(Debug, Default, PartialEq)]
@@ -34,6 +38,9 @@ pub use macos::collect;
 #[cfg(target_os = "linux")]
 pub use linux::collect;
 
+#[cfg(target_os = "windows")]
+pub use win::collect;
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -56,9 +63,11 @@ mod tests {
         assert_matches!(m.open_fds, Some(_));
         assert_matches!(m.max_fds, Some(_));
         assert_matches!(m.virtual_memory_bytes, Some(_));
+        #[cfg(not(target_os = "windows"))]
         assert_matches!(m.virtual_memory_max_bytes, Some(_)); // maybe 'unlimited'
         assert_matches!(m.resident_memory_bytes, Some(_));
         assert_matches!(m.start_time_seconds, Some(_));
+        #[cfg(not(target_os = "windows"))]
         assert_matches!(m.threads, Some(_));
     }
 }

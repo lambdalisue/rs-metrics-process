@@ -39,6 +39,7 @@ impl Collector {
             Unit::Bytes,
             "Virtual memory size in bytes."
         );
+        #[cfg(not(target_os = "windows"))]
         describe_gauge!(
             format!("{}process_virtual_memory_max_bytes", prefix),
             Unit::Bytes,
@@ -54,6 +55,7 @@ impl Collector {
             Unit::Seconds,
             "Start time of the process since unix epoch in seconds."
         );
+        #[cfg(not(target_os = "windows"))]
         describe_gauge!(
             format!("{}process_threads", prefix),
             Unit::Count,
@@ -76,6 +78,7 @@ impl Collector {
         if let Some(v) = m.virtual_memory_bytes.take() {
             gauge!(format!("{}process_virtual_memory_bytes", prefix), v as f64);
         }
+        #[cfg(not(target_os = "windows"))]
         if let Some(v) = m.virtual_memory_max_bytes.take() {
             gauge!(
                 format!("{}process_virtual_memory_max_bytes", prefix),
@@ -88,6 +91,7 @@ impl Collector {
         if let Some(v) = m.start_time_seconds.take() {
             gauge!(format!("{}process_start_time_seconds", prefix), v as f64);
         }
+        #[cfg(not(target_os = "windows"))]
         if let Some(v) = m.threads.take() {
             gauge!(format!("{}process_therads", prefix), v as f64);
         }
