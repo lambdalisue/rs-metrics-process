@@ -3,20 +3,6 @@ name: Test
 on: [push]
 
 jobs:
-  check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          components: clippy
-          override: true
-      - uses: actions-rs/clippy-check@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: --all-features
-
   fmt:
     runs-on: ubuntu-latest
     steps:
@@ -33,8 +19,25 @@ jobs:
         run: |
           test -z "$(git status -s)"
 
-  test:
+  check:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          components: clippy
+          override: true
+      - uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --all-features --all-targets
+
+  test:
+    strategy:
+      matrix:
+        runner: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
