@@ -39,6 +39,7 @@ impl Collector {
             Unit::Bytes,
             "Virtual memory size in bytes."
         );
+        #[cfg(not(target_os = "windows"))]
         describe_gauge!(
             format!("{}process_virtual_memory_max_bytes", prefix),
             Unit::Bytes,
@@ -54,6 +55,7 @@ impl Collector {
             Unit::Seconds,
             "Start time of the process since unix epoch in seconds."
         );
+        #[cfg(not(target_os = "windows"))]
         describe_gauge!(
             format!("{}process_threads", prefix),
             Unit::Count,
@@ -63,49 +65,35 @@ impl Collector {
 
     pub fn collect(&self) {
         let prefix = &self.prefix;
-        let m = collector::collect();
-        if m.cpu_seconds_total.is_normal() {
+        let mut m = collector::collect();
+        if let Some(v) = m.cpu_seconds_total.take() {
+            gauge!(format!("{}process_cpu_seconds_total", prefix), v);
+        }
+        if let Some(v) = m.open_fds.take() {
+            gauge!(format!("{}process_open_fds", prefix), v as f64);
+        }
+        if let Some(v) = m.max_fds.take() {
+            gauge!(format!("{}process_max_fds", prefix), v as f64);
+        }
+        if let Some(v) = m.virtual_memory_bytes.take() {
+            gauge!(format!("{}process_virtual_memory_bytes", prefix), v as f64);
+        }
+        #[cfg(not(target_os = "windows"))]
+        if let Some(v) = m.virtual_memory_max_bytes.take() {
             gauge!(
-                format!("{}process_cpu_seconds_total", prefix),
-                m.cpu_seconds_total,
+                format!("{}process_virtual_memory_max_bytes", prefix),
+                v as f64,
             );
         }
-        if m.open_fds > 0 {
-            gauge!(format!("{}process_open_fds", prefix), m.open_fds as f64);
+        if let Some(v) = m.resident_memory_bytes.take() {
+            gauge!(format!("{}process_resident_memory_bytes", prefix), v as f64);
         }
-        if let Some(v) = m.max_fds {
-            if v > 0 {
-                gauge!(format!("{}process_max_fds", prefix), v as f64);
-            }
+        if let Some(v) = m.start_time_seconds.take() {
+            gauge!(format!("{}process_start_time_seconds", prefix), v as f64);
         }
-        if m.virtual_memory_bytes > 0 {
-            gauge!(
-                format!("{}process_virtual_memory_bytes", prefix),
-                m.virtual_memory_bytes as f64,
-            );
-        }
-        if let Some(v) = m.virtual_memory_max_bytes {
-            if v > 0 {
-                gauge!(
-                    format!("{}process_virtual_memory_max_bytes", prefix),
-                    v as f64,
-                );
-            }
-        }
-        if m.resident_memory_bytes > 0 {
-            gauge!(
-                format!("{}process_resident_memory_bytes", prefix),
-                m.resident_memory_bytes as f64,
-            );
-        }
-        if m.start_time_seconds > 0 {
-            gauge!(
-                format!("{}process_start_time_seconds", prefix),
-                m.start_time_seconds as f64,
-            );
-        }
-        if m.threads > 0 {
-            gauge!(format!("{}process_therads", prefix), m.threads as f64);
+        #[cfg(not(target_os = "windows"))]
+        if let Some(v) = m.threads.take() {
+            gauge!(format!("{}process_therads", prefix), v as f64);
         }
     }
 }
