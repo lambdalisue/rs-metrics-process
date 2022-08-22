@@ -14,23 +14,19 @@ pub fn collect() -> Metrics {
         metrics.cpu_seconds_total = {
             // Unit of 'ri_xxxx_time' is 'nano' (10^-9) seconds
             let t = res.ri_user_time + res.ri_system_time;
-            (t as f64) * 1e-9
+            Some((t as f64) * 1e-9)
         };
     }
     if let Ok(info) = pidinfo::<TaskAllInfo>(pid, 0) {
-        metrics.start_time_seconds = info.pbsd.pbi_start_tvsec;
-        metrics.virtual_memory_bytes = info.ptinfo.pti_virtual_size;
-        metrics.resident_memory_bytes = info.ptinfo.pti_resident_size;
-        metrics.threads = info.ptinfo.pti_threadnum as u64;
-        if let Ok(fds) = listpidinfo::<ListFDs>(pid, info.pbsd.pbi_nfiles as usize) {
-            metrics.open_fds = fds.len() as u64;
-        }
+        metrics.start_time_seconds = Some(info.pbsd.pbi_start_tvsec);
+        metrics.virtual_memory_bytes = Some(info.ptinfo.pti_virtual_size);
+        metrics.resident_memory_bytes = Some(info.ptinfo.pti_resident_size);
+        metrics.threads = Some(info.ptinfo.pti_threadnum as u64);
+        metrics.open_fds = listpidinfo::<ListFDs>(pid, info.pbsd.pbi_nfiles as usize)
+            .ok()
+            .map(|v| v.len() as u64);
     }
-    if let Ok((soft, _hard)) = getrlimit(Resource::AS) {
-        metrics.virtual_memory_max_bytes = Some(soft);
-    }
-    if let Ok((soft, _hard)) = getrlimit(Resource::NOFILE) {
-        metrics.max_fds = Some(soft);
-    }
+    metrics.virtual_memory_max_bytes = getrlimit(Resource::AS).ok().map(|(soft, _hard)| soft);
+    metrics.max_fds = getrlimit(Resource::NOFILE).ok().map(|(soft, _hard)| soft);
     metrics
 }

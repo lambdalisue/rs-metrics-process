@@ -9,23 +9,23 @@ mod linux;
 #[derive(Debug, Default, PartialEq)]
 pub struct Metrics {
     /// Total user and system CPU time spent in seconds.
-    pub cpu_seconds_total: f64,
+    pub cpu_seconds_total: Option<f64>,
     /// Number of open file descriptors.
-    pub open_fds: u64,
+    pub open_fds: Option<u64>,
     /// Maximum number of open file descriptors.
     /// 0 indicates 'unlimited'.
     pub max_fds: Option<u64>,
     /// Virtual memory size in bytes.
-    pub virtual_memory_bytes: u64,
+    pub virtual_memory_bytes: Option<u64>,
     /// Maximum amount of virtual memory available in bytes.
     /// 0 indicates 'unlimited'.
     pub virtual_memory_max_bytes: Option<u64>,
     /// Resident memory size in bytes.
-    pub resident_memory_bytes: u64,
+    pub resident_memory_bytes: Option<u64>,
     /// Start time of the process since unix epoch in seconds.
-    pub start_time_seconds: u64,
+    pub start_time_seconds: Option<u64>,
     /// Numberof OS threads in the process.
-    pub threads: u64,
+    pub threads: Option<u64>,
 }
 
 #[cfg(target_os = "macos")]
@@ -52,13 +52,13 @@ mod tests {
         fibonacci(40);
         let m = collect();
         dbg!(&m);
-        assert!(m.cpu_seconds_total > 0.0);
-        assert!(m.open_fds > 0);
+        assert_matches!(m.cpu_seconds_total, Some(_));
+        assert_matches!(m.open_fds, Some(_));
         assert_matches!(m.max_fds, Some(_));
-        assert!(m.virtual_memory_bytes > 0);
+        assert_matches!(m.virtual_memory_bytes, Some(_));
         assert_matches!(m.virtual_memory_max_bytes, Some(_)); // maybe 'unlimited'
-        assert!(m.resident_memory_bytes > 0);
-        assert!(m.start_time_seconds > 0);
-        assert!(m.threads > 0);
+        assert_matches!(m.resident_memory_bytes, Some(_));
+        assert_matches!(m.start_time_seconds, Some(_));
+        assert_matches!(m.threads, Some(_));
     }
 }
