@@ -1,4 +1,5 @@
 //! This crate provides [Prometheus][] style [process metrics][] collector of [metrics][] crate.
+//! Collector code is manually re-written to Rust from an official prometheus client of go ([client_golang][])
 //!
 //! [Prometheus]: https://prometheus.io/
 //! [process metrics]: https://prometheus.io/docs/instrumenting/writing_clientlibs/#process-metrics
@@ -6,7 +7,7 @@
 //!
 //! # Supported metrics
 //!
-//! This crate supports the following metrics, equal to what official prometheus client of go ([client_golang]) provides.
+//! This crate supports the following metrics, equal to what official prometheus client of go ([client_golang][]) provides.
 //!
 //! | Metric name                        | Help string                                            | Linux | macOS | Windows |
 //! | ---------------------------------- | ------------------------------------------------------ | ----- | ----- | ------- |
@@ -90,6 +91,13 @@
 //!         .unwrap();
 //! }
 //! ```
+//!
+//! # Difference from [metrics-process-promstyle][]
+//!
+//! It seems [metrics-process-promstyle][] only support Linux but this crate (metrics-process) supports Linux, macOS, and Windows.
+//! Additionally, this crate supports `process_open_fds` and `process_max_fds` addition to what metrics-process-promstyle supports.
+//!
+//! [metrics-process-promstyle]: https://crates.io/crates/metrics-process-promstyle
 mod collector;
 
 use metrics::{describe_gauge, gauge, Unit};
