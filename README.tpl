@@ -5,7 +5,7 @@
 [![Test](https://github.com/lambdalisue/rs-metrics-process/actions/workflows/test.yml/badge.svg)](https://github.com/lambdalisue/rs-metrics-process/actions/workflows/test.yml)
 [![Audit](https://github.com/lambdalisue/rs-metrics-process/actions/workflows/audit.yml/badge.svg)](https://github.com/lambdalisue/rs-metrics-process/actions/workflows/audit.yml)
 
-# {{crate}}
+# ⏱ {{crate}}
 
 {{readme}}
 

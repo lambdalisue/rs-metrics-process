@@ -5,12 +5,100 @@
 [![Test](https://github.com/lambdalisue/rs-metrics-process/actions/workflows/test.yml/badge.svg)](https://github.com/lambdalisue/rs-metrics-process/actions/workflows/test.yml)
 [![Audit](https://github.com/lambdalisue/rs-metrics-process/actions/workflows/audit.yml/badge.svg)](https://github.com/lambdalisue/rs-metrics-process/actions/workflows/audit.yml)
 
-# metrics-process
+# ⏱ metrics-process
 
-This crate provides [process metrics][] of Prometheus for [metrics][].
+This crate provides [Prometheus][] style [process metrics][] collector of [metrics][] crate.
 
+[Prometheus]: https://prometheus.io/
 [process metrics]: https://prometheus.io/docs/instrumenting/writing_clientlibs/#process-metrics
-[metrics]: https://github.com/metrics-rs/metrics
+[metrics]: https://crates.io/crates/metrics
+
+## Supported metrics
+
+This crate supports the following metrics, equal to what official prometheus client of go ([client_golang]) provides.
+
+| Metric name                        | Help string                                            | Linux | macOS | Windows |
+| ---------------------------------- | ------------------------------------------------------ | ----- | ----- | ------- |
+| `process_cpu_seconds_total`        | Total user and system CPU time spent in seconds.       | x     | x     | x       |
+| `process_open_fds`                 | Number of open file descriptors.                       | x     | x     | x       |
+| `process_max_fds`                  | Maximum number of open file descriptors.               | x     | x     | x       |
+| `process_virtual_memory_bytes`     | Virtual memory size in bytes.                          | x     | x     | x       |
+| `process_virtual_memory_max_bytes` | Maximum amount of virtual memory available in bytes.   | x     | x     |         |
+| `process_resident_memory_bytes`    | Resident memory size in bytes.                         | x     | x     | x       |
+| `process_heap_bytes`               | Process heap size in bytes.                            |       |       |         |
+| `process_start_time_seconds`       | Start time of the process since unix epoch in seconds. | x     | x     | x       |
+| `process_threads`                  | Number of OS threads in the process.                   | x     | x     |         |
+
+[client_golang]: https://github.com/prometheus/client_golang
+
+## Usage
+
+Use this crate with [metrics-exporter-prometheus][] as an exporter like:
+
+[metrics-exporter-prometheus]: https://crates.io/crates/metrics-exporter-prometheus
+
+```rust
+use std::thread;
+use std::time::{Duration, Instant};
+
+use metrics_exporter_prometheus::PrometheusBuilder;
+use metrics_process::Collector;
+
+fn main() {
+    let builder = PrometheusBuilder::new();
+    builder
+        .install()
+        .expect("failed to install Prometheus recorder");
+
+    let collector = Collector::new("");
+    // Call `describe()` method to register help string.
+    collector.describe();
+
+    loop {
+        let s = Instant::now();
+        // Periodically call `collect()` method to update information.
+        collector.collect();
+        thread::sleep(Duration::from_millis(750));
+    }
+}
+```
+
+Or with [axum][] (or any web application framework you like) to collect metrics whenever
+the `/metrics` endpoint is invoked like:
+
+[axum]: https://crates.io/crates/axum
+
+```rust
+use axum::{routing::get, Router, Server};
+use metrics_exporter_prometheus::PrometheusBuilder;
+use metrics_process::Collector;
+
+#[tokio::main]
+async fn main() {
+    let builder = PrometheusBuilder::new();
+    let handle = builder
+        .install_recorder()
+        .expect("failed to install Prometheus recorder");
+
+    let collector = Collector::new("");
+    // Call `describe()` method to register help string.
+    collector.describe();
+
+    let addr = "127.0.0.1:9000".parse().unwrap();
+    let app = Router::new().route(
+        "/metrics",
+        get(move || {
+            // Collect information just before handle '/metrics'
+            collector.collect();
+            std::future::ready(handle.render())
+        }),
+    );
+    Server::bind(&addr)
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
+}
+```
 
 # License
 
