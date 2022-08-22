@@ -6,6 +6,7 @@ mod collector;
 
 use metrics::{describe_gauge, gauge, Unit};
 
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Collector {
     prefix: String,
 }
