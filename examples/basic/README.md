@@ -1,4 +1,8 @@
-# basic example of `metrics-process`
+# basic
+
+An example code of `metrics-process` with [metrics-exporter-prometheus][].
+
+[metrics-exporter-prometheus]: https://crates.io/crates/metrics-exporter-prometheus
 
 ## Usage
 
