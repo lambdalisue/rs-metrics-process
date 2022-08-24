@@ -1,24 +1,21 @@
-use procfs::{
-    boot_time_secs,
-    process::{LimitValue, Process},
-    ticks_per_second,
-};
+use once_cell::sync::Lazy;
+use procfs::process::{LimitValue, Process};
 
 use super::Metrics;
+
+static TICKS_PER_SECOND: Lazy<Option<f64>> =
+    Lazy::new(|| procfs::ticks_per_second().ok().map(|v| v as f64));
+static BOOT_TIME_SECS: Lazy<Option<u64>> = Lazy::new(|| procfs::boot_time_secs().ok());
 
 pub fn collect() -> Metrics {
     let mut metrics = Metrics::default();
     if let Ok(proc) = Process::myself() {
         if let Ok(stat) = proc.stat() {
-            if let Ok(ticks_per_second) = ticks_per_second() {
-                metrics.start_time_seconds = boot_time_secs().ok().map(|b| {
-                    let t = stat.starttime / ticks_per_second;
-                    t + b
-                });
-                metrics.cpu_seconds_total = {
-                    let t = (stat.utime + stat.stime) as f64;
-                    Some(t / (ticks_per_second as f64))
-                };
+            if let Some(tps) = *TICKS_PER_SECOND {
+                if let Some(bts) = *BOOT_TIME_SECS {
+                    metrics.start_time_seconds = Some(bts + ((stat.starttime as f64) / tps) as u64);
+                }
+                metrics.cpu_seconds_total = Some((stat.utime + stat.stime) as f64 / tps);
             }
             metrics.resident_memory_bytes = stat.rss_bytes().ok();
             metrics.virtual_memory_bytes = Some(stat.vsize);
