@@ -36,22 +36,20 @@
 //! use metrics_exporter_prometheus::PrometheusBuilder;
 //! use metrics_process::Collector;
 //!
-//! fn main() {
-//!     let builder = PrometheusBuilder::new();
-//!     builder
-//!         .install()
-//!         .expect("failed to install Prometheus recorder");
+//! let builder = PrometheusBuilder::new();
+//! builder
+//!     .install()
+//!     .expect("failed to install Prometheus recorder");
 //!
-//!     let collector = Collector::new("");
-//!     // Call `describe()` method to register help string.
-//!     collector.describe();
+//! let collector = Collector::new("");
+//! // Call `describe()` method to register help string.
+//! collector.describe();
 //!
-//!     loop {
-//!         let s = Instant::now();
-//!         // Periodically call `collect()` method to update information.
-//!         collector.collect();
-//!         thread::sleep(Duration::from_millis(750));
-//!     }
+//! loop {
+//!     let s = Instant::now();
+//!     // Periodically call `collect()` method to update information.
+//!     collector.collect();
+//!     thread::sleep(Duration::from_millis(750));
 //! }
 //! ```
 //!
