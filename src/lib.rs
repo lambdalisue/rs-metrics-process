@@ -41,7 +41,7 @@
 //!     .install()
 //!     .expect("failed to install Prometheus recorder");
 //!
-//! let collector = Collector::new("");
+//! let collector = Collector::default();
 //! // Call `describe()` method to register help string.
 //! collector.describe();
 //!
@@ -70,7 +70,7 @@
 //!         .install_recorder()
 //!         .expect("failed to install Prometheus recorder");
 //!
-//!     let collector = Collector::new("");
+//!     let collector = Collector::default();
 //!     // Call `describe()` method to register help string.
 //!     collector.describe();
 //!
@@ -106,21 +106,31 @@ pub struct Collector {
     prefix: String,
 }
 
-impl Collector {
+impl Default for Collector {
     /// Create a new Collector instance
-    ///
-    /// * `prefix` - A prefix string that is prepended to metric keys.
     ///
     /// # Examples
     ///
     /// ```
     /// # use metrics_process::Collector;
-    /// let collector = Collector::new("my_metrics_");
+    /// let collector = Collector::default();
     /// ```
-    pub fn new(prefix: impl Into<String>) -> Self {
-        Self {
-            prefix: prefix.into(),
-        }
+    fn default() -> Self {
+        Self { prefix: "".into() }
+    }
+}
+
+impl Collector {
+    /// Add an prefix that is prepended to metric keys.
+    /// # Examples
+    ///
+    /// ```
+    /// # use metrics_process::Collector;
+    /// let collector = Collector::default().prefix("my_prefix_");
+    /// ```
+    pub fn prefix(&mut self, prefix: impl Into<String>) -> &mut Self {
+        self.prefix = prefix.into();
+        self
     }
 
     /// Describe available metrics through `describe_gauge!` macro of `metrics` crate.
@@ -136,7 +146,7 @@ impl Collector {
     /// let builder = PrometheusBuilder::new();
     /// builder.install().expect("failed to install recorder/exporter");
     ///
-    /// let collector = Collector::new("my_metrics_");
+    /// let collector = Collector::default();
     /// // Describe collector
     /// collector.describe();
     /// # }
@@ -200,7 +210,7 @@ impl Collector {
     /// let builder = PrometheusBuilder::new();
     /// builder.install().expect("failed to install recorder/exporter");
     ///
-    /// let collector = Collector::new("my_metrics_");
+    /// let collector = Collector::default();
     /// collector.describe();
     /// // Collect metrics
     /// collector.collect();

@@ -11,7 +11,7 @@ fn main() {
         .install()
         .expect("failed to install Prometheus recorder");
 
-    let collector = Collector::new("");
+    let collector = Collector::default();
     collector.describe();
 
     let mut rng = thread_rng();

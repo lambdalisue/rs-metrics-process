@@ -9,7 +9,7 @@ async fn main() {
         .install_recorder()
         .expect("failed to install Prometheus recorder");
 
-    let collector = Collector::new("");
+    let collector = Collector::default();
     // Call `describe()` method to register help string.
     collector.describe();
 
