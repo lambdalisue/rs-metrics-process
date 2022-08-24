@@ -7,7 +7,8 @@
 
 # ⏱ metrics-process
 
-This crate provides [Prometheus][] style [process metrics][] collector of [metrics][] crate.
+This crate provides [Prometheus][] style [process metrics][] collector of [metrics][] crate for Linux, macOS, and Windows.
+Collector code is manually re-written to Rust from an official prometheus client of go ([client_golang][])
 
 [Prometheus]: https://prometheus.io/
 [process metrics]: https://prometheus.io/docs/instrumenting/writing_clientlibs/#process-metrics
@@ -15,7 +16,7 @@ This crate provides [Prometheus][] style [process metrics][] collector of [metri
 
 ## Supported metrics
 
-This crate supports the following metrics, equal to what official prometheus client of go ([client_golang]) provides.
+This crate supports the following metrics, equal to what official prometheus client of go ([client_golang][]) provides.
 
 | Metric name                        | Help string                                            | Linux | macOS | Windows |
 | ---------------------------------- | ------------------------------------------------------ | ----- | ----- | ------- |
@@ -44,22 +45,20 @@ use std::time::{Duration, Instant};
 use metrics_exporter_prometheus::PrometheusBuilder;
 use metrics_process::Collector;
 
-fn main() {
-    let builder = PrometheusBuilder::new();
-    builder
-        .install()
-        .expect("failed to install Prometheus recorder");
+let builder = PrometheusBuilder::new();
+builder
+    .install()
+    .expect("failed to install Prometheus recorder");
 
-    let collector = Collector::new("");
-    // Call `describe()` method to register help string.
-    collector.describe();
+let collector = Collector::new("");
+// Call `describe()` method to register help string.
+collector.describe();
 
-    loop {
-        let s = Instant::now();
-        // Periodically call `collect()` method to update information.
-        collector.collect();
-        thread::sleep(Duration::from_millis(750));
-    }
+loop {
+    let s = Instant::now();
+    // Periodically call `collect()` method to update information.
+    collector.collect();
+    thread::sleep(Duration::from_millis(750));
 }
 ```
 
@@ -99,6 +98,13 @@ async fn main() {
         .unwrap();
 }
 ```
+
+## Difference from [metrics-process-promstyle][]
+
+It seems [metrics-process-promstyle][] only support Linux but this crate (metrics-process) supports Linux, macOS, and Windows.
+Additionally, this crate supports `process_open_fds` and `process_max_fds` addition to what metrics-process-promstyle supports.
+
+[metrics-process-promstyle]: https://crates.io/crates/metrics-process-promstyle
 
 # License
 

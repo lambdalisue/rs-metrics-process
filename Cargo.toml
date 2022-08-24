@@ -4,11 +4,11 @@ version = "0.1.0"
 authors = ["Alisue <lambdalisue@gmail.com>"]
 edition = "2018"
 
-description = "metrics plugin to support prometheus process metrics"
+description = "Cross-platform Prometheus style process metrics collector of metrics crate"
 repository = "https://github.com/lambdalisue/rs-metrics-process"
 license = "MIT"
 readme = "README.md"
-keywords = ["metrics", "prometheus", "open-metrics", "process"]
+keywords = ["cross-platform", "metrics", "prometheus", "open-metrics", "process"]
 
 [package.metadata.docs.rs]
 all-features = true

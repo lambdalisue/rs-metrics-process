@@ -1,4 +1,4 @@
-//! This crate provides [Prometheus][] style [process metrics][] collector of [metrics][] crate.
+//! This crate provides [Prometheus][] style [process metrics][] collector of [metrics][] crate for Linux, macOS, and Windows.
 //! Collector code is manually re-written to Rust from an official prometheus client of go ([client_golang][])
 //!
 //! [Prometheus]: https://prometheus.io/
