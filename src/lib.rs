@@ -128,7 +128,7 @@ impl Collector {
     /// # use metrics_process::Collector;
     /// let collector = Collector::default().prefix("my_prefix_");
     /// ```
-    pub fn prefix(&mut self, prefix: impl Into<String>) -> &mut Self {
+    pub fn prefix(mut self, prefix: impl Into<String>) -> Self {
         self.prefix = prefix.into();
         self
     }
