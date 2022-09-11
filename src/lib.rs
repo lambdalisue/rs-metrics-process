@@ -246,7 +246,7 @@ impl Collector {
         }
         #[cfg(not(target_os = "windows"))]
         if let Some(v) = m.threads.take() {
-            gauge!(format!("{}process_therads", prefix), v as f64);
+            gauge!(format!("{}process_threads", prefix), v as f64);
         }
     }
 }
