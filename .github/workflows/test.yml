@@ -62,6 +62,8 @@ jobs:
     strategy:
       matrix:
         runner: [ubuntu-latest, macos-latest, windows-latest]
+    env:
+      RUNNER: ${{ matrix.runner }}
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v2
@@ -86,4 +88,11 @@ jobs:
           cargo llvm-cov --version
       - name: Test
         run: |
-          cargo llvm-cov --all-features
+          cargo llvm-cov --all-features --lcov --output-path lcov.info
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+          files: lcov.info
+          env_vars: RUNNER
+          fail_ci_if_error: true

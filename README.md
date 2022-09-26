@@ -4,13 +4,14 @@
 [![Build](https://github.com/lambdalisue/rs-metrics-process/actions/workflows/build.yml/badge.svg)](https://github.com/lambdalisue/rs-metrics-process/actions/workflows/build.yml)
 [![Test](https://github.com/lambdalisue/rs-metrics-process/actions/workflows/test.yml/badge.svg)](https://github.com/lambdalisue/rs-metrics-process/actions/workflows/test.yml)
 [![Audit](https://github.com/lambdalisue/rs-metrics-process/actions/workflows/audit.yml/badge.svg)](https://github.com/lambdalisue/rs-metrics-process/actions/workflows/audit.yml)
+[![codecov](https://codecov.io/gh/lambdalisue/rs-metrics-process/branch/main/graph/badge.svg?token=42RM3JKBoL)](https://codecov.io/gh/lambdalisue/rs-metrics-process)
 
 # ⏱ metrics-process
 
 This crate provides [Prometheus][] style [process metrics][] collector of [metrics][] crate for Linux, macOS, and Windows.
 Collector code is manually re-written to Rust from an official prometheus client of go ([client_golang][])
 
-[Prometheus]: https://prometheus.io/
+[prometheus]: https://prometheus.io/
 [process metrics]: https://prometheus.io/docs/instrumenting/writing_clientlibs/#process-metrics
 [metrics]: https://crates.io/crates/metrics
 
