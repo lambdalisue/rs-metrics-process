@@ -7,14 +7,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - uses: actions/cache@v3
         with:
-          toolchain: nightly
-          components: rustfmt
-          override: true
-      - uses: actions-rs/cargo@v1
-        with:
-          command: fmt
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Update local toolchain
+        run: |
+          rustup update
+          rustup component add rustfmt
+      - name: Toolchain info
+        run: |
+          rustc --version
+          cargo --version --verbose
+          cargo fmt --version
+      - name: Format
+        run: |
+          cargo fmt
       - name: Diff check
         run: |
           test -z "$(git status -s)"
@@ -23,28 +36,63 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - uses: actions/cache@v3
         with:
-          toolchain: nightly
-          components: clippy
-          override: true
-      - uses: actions-rs/clippy-check@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: --all-features --all-targets
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Update local toolchain
+        run: |
+          rustup update
+          rustup component add clippy
+      - name: Toolchain info
+        run: |
+          rustc --version
+          cargo --version --verbose
+          cargo clippy --version
+      - name: Clippy check
+        run: |
+          cargo clippy --all-features --all-targets
 
   test:
     strategy:
       matrix:
         runner: [ubuntu-latest, macos-latest, windows-latest]
+    env:
+      RUNNER: ${{ matrix.runner }}
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - uses: actions/cache@v3
         with:
-          toolchain: nightly
-          override: true
-      - uses: actions-rs/cargo@v1
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Update local toolchain
+        run: |
+          rustup update
+          rustup component add llvm-tools-preview
+          cargo install cargo-llvm-cov
+      - name: Toolchain info
+        run: |
+          rustc --version
+          cargo --version --verbose
+          cargo llvm-cov --version
+      - name: Test
+        run: |
+          cargo llvm-cov --all-features --lcov --output-path lcov.info
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
         with:
-          command: test
-          args: --all-features
+          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+          files: lcov.info
+          env_vars: RUNNER
+          fail_ci_if_error: true
