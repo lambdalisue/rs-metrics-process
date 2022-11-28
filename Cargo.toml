@@ -1,6 +1,6 @@
 [package]
 name = "metrics-process"
-version = "1.0.3"
+version = "1.0.4"
 authors = ["Alisue <lambdalisue@gmail.com>"]
 edition = "2018"
 
