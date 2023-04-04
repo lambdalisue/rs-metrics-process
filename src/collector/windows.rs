@@ -59,7 +59,7 @@ pub fn collect() -> Metrics {
             let memcounters = memcounters as *const _ as *mut PROCESS_MEMORY_COUNTERS;
             let memcounters = &mut *memcounters;
             let cb = size_of::<PROCESS_MEMORY_COUNTERS_EX>();
-            let ret = K32GetProcessMemoryInfo(h, memcounters, cb as u32);
+            let ret = GetProcessMemoryInfo(h, memcounters, cb as u32);
             if ret.as_bool() {
                 let memcounters = memcounters as *const _ as *const PROCESS_MEMORY_COUNTERS_EX;
                 let &memcounters = &*memcounters;
