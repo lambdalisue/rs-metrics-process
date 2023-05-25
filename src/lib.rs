@@ -193,7 +193,7 @@ impl Collector {
         describe_gauge!(
             format!("{}process_threads", prefix),
             Unit::Count,
-            "Numberof OS threads in the process."
+            "Number of OS threads in the process."
         );
     }
 
