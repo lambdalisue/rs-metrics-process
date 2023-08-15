@@ -35,7 +35,7 @@ pub fn collect() -> Metrics {
                 kerneltime.as_mut_ptr(),
                 usertime.as_mut_ptr(),
             );
-            if ret.as_bool() {
+            if ret.is_ok() {
                 // `creationtime` and `_exittime` are points in time expressed as the amount of time that
                 // has elapsed since midnight on January 1, 1601 in 100 nanosecond time units.
                 let start_time_seconds =
@@ -60,7 +60,7 @@ pub fn collect() -> Metrics {
             let memcounters = &mut *memcounters;
             let cb = size_of::<PROCESS_MEMORY_COUNTERS_EX>();
             let ret = GetProcessMemoryInfo(h, memcounters, cb as u32);
-            if ret.as_bool() {
+            if ret.is_ok() {
                 let memcounters = memcounters as *const _ as *const PROCESS_MEMORY_COUNTERS_EX;
                 let &memcounters = &*memcounters;
                 (
@@ -77,7 +77,7 @@ pub fn collect() -> Metrics {
         let open_fds = {
             let mut handlecount = 0;
             let ret = GetProcessHandleCount(h, &mut handlecount);
-            if ret.as_bool() {
+            if ret.is_ok() {
                 Some(handlecount as u64)
             } else {
                 None
