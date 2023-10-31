@@ -55,9 +55,13 @@ pub fn collect() -> Metrics {
         metrics.cpu_seconds_total = cpu_seconds_total;
 
         let (virtual_memory_bytes, resident_memory_bytes) = {
-            let memcounters = &PROCESS_MEMORY_COUNTERS_EX::default();
-            let memcounters = memcounters as *const _ as *mut PROCESS_MEMORY_COUNTERS;
-            let memcounters = &mut *memcounters;
+            // We need to use PROCESS_MEMORY_COUNTERS_EX but GetProcessMemoryInfoEx is not provided
+            // thus we need to cast PROCESS_MEMORY_COUNTERS_EX into PROCESS_MEMORY_COUNTERS to use
+            // it with GetProcessMemoryInfo.
+            let memcounters = {
+                let m = &PROCESS_MEMORY_COUNTERS_EX::default();
+                m as *const _ as *mut PROCESS_MEMORY_COUNTERS
+            };
             let cb = size_of::<PROCESS_MEMORY_COUNTERS_EX>();
             let ret = GetProcessMemoryInfo(h, memcounters, cb as u32);
             if ret.is_ok() {

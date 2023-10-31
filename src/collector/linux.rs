@@ -1,4 +1,5 @@
 use once_cell::sync::Lazy;
+use procfs::prelude::*;
 use procfs::process::{LimitValue, Process};
 
 use super::Metrics;
@@ -15,7 +16,7 @@ pub fn collect() -> Metrics {
                     Some(bts + ((stat.starttime as f64) / *TICKS_PER_SECOND) as u64);
             }
             metrics.cpu_seconds_total = Some((stat.utime + stat.stime) as f64 / *TICKS_PER_SECOND);
-            metrics.resident_memory_bytes = Some(stat.rss_bytes());
+            metrics.resident_memory_bytes = Some(stat.rss_bytes().get());
             metrics.virtual_memory_bytes = Some(stat.vsize);
             metrics.threads = Some(stat.num_threads as u64);
         }
