@@ -8,7 +8,7 @@ description = "Cross-platform Prometheus style process metrics collector of metr
 repository = "https://github.com/lambdalisue/rs-metrics-process"
 license = "MIT"
 readme = "README.md"
-keywords = ["cross-platform", "metrics", "prometheus", "open-metrics", "process"]
+keywords = [ "cross-platform", "metrics", "prometheus", "open-metrics", "process", ]
 
 [package.metadata.docs.rs]
 all-features = true

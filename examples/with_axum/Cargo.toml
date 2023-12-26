@@ -6,8 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-axum = "0.5.15"
+axum = "0.7.2"
 metrics = "0.22.0"
 metrics-exporter-prometheus = { version = "0.13.0", default-features = false }
-metrics-process = { path = "../../"}
+metrics-process = { path = "../../" }
 tokio = { version = "1.20.1", features = ["full"] }

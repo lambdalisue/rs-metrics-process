@@ -39,7 +39,7 @@ Use this crate with [metrics-exporter-prometheus] as an exporter like:
 
 [metrics-exporter-prometheus]: https://crates.io/crates/metrics-exporter-prometheus
 
-```rust,no_run
+```rust
 use std::thread;
 use std::time::{Duration, Instant};
 
@@ -68,10 +68,11 @@ the `/metrics` endpoint is invoked like:
 
 [axum]: https://crates.io/crates/axum
 
-```rust,no_run
-use axum::{routing::get, Router, Server};
+```rust
+use axum::{routing::get, Router};
 use metrics_exporter_prometheus::PrometheusBuilder;
 use metrics_process::Collector;
+use tokio::net::TcpListener;
 
 #[tokio::main]
 async fn main() {
@@ -93,10 +94,8 @@ async fn main() {
             std::future::ready(handle.render())
         }),
     );
-    Server::bind(&addr)
-        .serve(app.into_make_service())
-        .await
-        .unwrap();
+    let listener = TcpListener::bind("127.0.0.1:9000").await.unwrap();
+    axum::serve(listener, app).await.unwrap();
 }
 ```
 

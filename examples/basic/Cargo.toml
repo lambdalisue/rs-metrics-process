@@ -8,5 +8,5 @@ edition = "2021"
 [dependencies]
 metrics = "0.22.0"
 metrics-exporter-prometheus = "0.13.0"
-metrics-process = { path = "../../"}
+metrics-process = { path = "../../" }
 rand = "0.8.5"
