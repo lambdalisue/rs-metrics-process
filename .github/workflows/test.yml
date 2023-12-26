@@ -27,10 +27,7 @@ jobs:
           cargo fmt --version
       - name: Format
         run: |
-          cargo fmt
-      - name: Diff check
-        run: |
-          test -z "$(git status -s)"
+          cargo fmt --check
 
   check:
     runs-on: ubuntu-latest
