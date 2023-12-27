@@ -104,35 +104,29 @@ use metrics::{describe_gauge, gauge, Unit};
 /// Metrics names
 #[derive(Debug, PartialEq, Eq)]
 struct Metrics {
-    prefixed: bool,
-    cpu_seconds_total: &'static str,
-    open_fds: &'static str,
-    max_fds: &'static str,
-    virtual_memory_bytes: &'static str,
-    virtual_memory_max_bytes: &'static str,
-    resident_memory_bytes: &'static str,
-    start_time_seconds: &'static str,
-    threads: &'static str,
+    cpu_seconds_total: Arc<str>,
+    open_fds: Arc<str>,
+    max_fds: Arc<str>,
+    virtual_memory_bytes: Arc<str>,
+    virtual_memory_max_bytes: Arc<str>,
+    resident_memory_bytes: Arc<str>,
+    start_time_seconds: Arc<str>,
+    threads: Arc<str>,
 }
 
 impl Metrics {
     // Create new Metrics, allocating prefixed strings for metrics names.
     fn new(prefix: impl AsRef<str>) -> Arc<Self> {
-        fn prefixed(prefix: &str, name: &str) -> &'static str {
-            Box::leak(format!("{prefix}{name}").into_boxed_str())
-        }
-
         let prefix = prefix.as_ref();
         Arc::new(Self {
-            prefixed: true,
-            cpu_seconds_total: prefixed(prefix, "process_cpu_seconds_total"),
-            open_fds: prefixed(prefix, "process_open_fds"),
-            max_fds: prefixed(prefix, "process_max_fds"),
-            virtual_memory_bytes: prefixed(prefix, "process_virtual_memory_bytes"),
-            virtual_memory_max_bytes: prefixed(prefix, "process_virtual_memory_max_bytes"),
-            resident_memory_bytes: prefixed(prefix, "process_resident_memory_bytes"),
-            start_time_seconds: prefixed(prefix, "process_start_time_seconds"),
-            threads: prefixed(prefix, "process_threads"),
+            cpu_seconds_total: format!("{prefix}process_cpu_seconds_total").into(),
+            open_fds: format!("{prefix}process_open_fds").into(),
+            max_fds: format!("{prefix}process_max_fds").into(),
+            virtual_memory_bytes: format!("{prefix}process_virtual_memory_bytes").into(),
+            virtual_memory_max_bytes: format!("{prefix}process_virtual_memory_max_bytes").into(),
+            resident_memory_bytes: format!("{prefix}process_resident_memory_bytes").into(),
+            start_time_seconds: format!("{prefix}process_start_time_seconds").into(),
+            threads: format!("{prefix}process_threads").into(),
         })
     }
 }
@@ -141,62 +135,14 @@ impl Default for Metrics {
     // Create new Metrics, without prefixing and thus allocating.
     fn default() -> Self {
         Self {
-            prefixed: false,
-            cpu_seconds_total: "process_cpu_seconds_total",
-            open_fds: "process_open_fds",
-            max_fds: "process_max_fds",
-            virtual_memory_bytes: "process_virtual_memory_bytes",
-            virtual_memory_max_bytes: "process_virtual_memory_max_bytes",
-            resident_memory_bytes: "process_resident_memory_bytes",
-            start_time_seconds: "process_start_time_seconds",
-            threads: "process_threads",
-        }
-    }
-}
-
-impl Drop for Metrics {
-    fn drop(&mut self) {
-        unsafe fn drop_static_str(s: &'static str) {
-            let ptr: *const str = s;
-            let ptr = ptr.cast_mut();
-            let boxed = unsafe { Box::from_raw(ptr) };
-            drop(boxed);
-        }
-
-        // If the strings are not prefixed, we must not deallocate them, as they
-        // are literals from `Default` implementation.
-        if !self.prefixed {
-            return;
-        }
-
-        // Get self by value from mutable reference
-        let this = mem::take(self);
-
-        // Copy all pointers
-        let cpu_seconds_total = this.cpu_seconds_total;
-        let open_fds = this.open_fds;
-        let max_fds = this.max_fds;
-        let virtual_memory_bytes = this.virtual_memory_bytes;
-        let virtual_memory_max_bytes = this.virtual_memory_max_bytes;
-        let resident_memory_bytes = this.resident_memory_bytes;
-        let start_time_seconds = this.start_time_seconds;
-        let threads = this.threads;
-
-        // Prevent recursive drop
-        mem::forget(this);
-
-        // SAFETY: We've checked that those `&'static str`s are the ones we
-        //         allocated. They are not exposed publicly, are created by
-        //         `Box::leak`, and we're deallocating them only once.
-        unsafe {
-            drop_static_str(cpu_seconds_total);
-            drop_static_str(open_fds);
-            drop_static_str(max_fds);
-            drop_static_str(virtual_memory_bytes);
-            drop_static_str(virtual_memory_max_bytes);
-            drop_static_str(resident_memory_bytes);
-            drop_static_str(start_time_seconds);
-            drop_static_str(threads);
+            cpu_seconds_total: "process_cpu_seconds_total".into(),
+            open_fds: "process_open_fds".into(),
+            max_fds: "process_max_fds".into(),
+            virtual_memory_bytes: "process_virtual_memory_bytes".into(),
+            virtual_memory_max_bytes: "process_virtual_memory_max_bytes".into(),
+            resident_memory_bytes: "process_resident_memory_bytes".into(),
+            start_time_seconds: "process_start_time_seconds".into(),
+            threads: "process_threads".into(),
         }
     }
 }
@@ -273,44 +219,44 @@ impl Collector {
         let metrics = self.metrics.as_ref();
 
         describe_gauge!(
-            metrics.cpu_seconds_total,
+            metrics.cpu_seconds_total.clone(),
             Unit::Seconds,
             "Total user and system CPU time spent in seconds."
         );
         describe_gauge!(
-            metrics.open_fds,
+            metrics.open_fds.clone(),
             Unit::Count,
             "Number of open file descriptors."
         );
         describe_gauge!(
-            metrics.max_fds,
+            metrics.max_fds.clone(),
             Unit::Count,
             "Maximum number of open file descriptors."
         );
         describe_gauge!(
-            metrics.virtual_memory_bytes,
+            metrics.virtual_memory_bytes.clone(),
             Unit::Bytes,
             "Virtual memory size in bytes."
         );
         #[cfg(not(target_os = "windows"))]
         describe_gauge!(
-            metrics.virtual_memory_max_bytes,
+            metrics.virtual_memory_max_bytes.clone(),
             Unit::Bytes,
             "Maximum amount of virtual memory available in bytes."
         );
         describe_gauge!(
-            metrics.resident_memory_bytes,
+            metrics.resident_memory_bytes.clone(),
             Unit::Bytes,
             "Resident memory size in bytes."
         );
         describe_gauge!(
-            metrics.start_time_seconds,
+            metrics.start_time_seconds.clone(),
             Unit::Seconds,
             "Start time of the process since unix epoch in seconds."
         );
         #[cfg(not(target_os = "windows"))]
         describe_gauge!(
-            metrics.threads,
+            metrics.threads.clone(),
             Unit::Count,
             "Number of OS threads in the process."
         );
@@ -339,30 +285,30 @@ impl Collector {
         let metrics = self.metrics.as_ref();
         let mut m = collector::collect();
         if let Some(v) = m.cpu_seconds_total.take() {
-            gauge!(metrics.cpu_seconds_total).set(v);
+            gauge!(metrics.cpu_seconds_total.clone()).set(v);
         }
         if let Some(v) = m.open_fds.take() {
-            gauge!(metrics.open_fds).set(v as f64);
+            gauge!(metrics.open_fds.clone()).set(v as f64);
         }
         if let Some(v) = m.max_fds.take() {
-            gauge!(metrics.max_fds).set(v as f64);
+            gauge!(metrics.max_fds.clone()).set(v as f64);
         }
         if let Some(v) = m.virtual_memory_bytes.take() {
-            gauge!(metrics.virtual_memory_bytes).set(v as f64);
+            gauge!(metrics.virtual_memory_bytes.clone()).set(v as f64);
         }
         #[cfg(not(target_os = "windows"))]
         if let Some(v) = m.virtual_memory_max_bytes.take() {
-            gauge!(metrics.virtual_memory_max_bytes).set(v as f64);
+            gauge!(metrics.virtual_memory_max_bytes.clone()).set(v as f64);
         }
         if let Some(v) = m.resident_memory_bytes.take() {
-            gauge!(metrics.resident_memory_bytes).set(v as f64);
+            gauge!(metrics.resident_memory_bytes.clone()).set(v as f64);
         }
         if let Some(v) = m.start_time_seconds.take() {
-            gauge!(metrics.start_time_seconds).set(v as f64);
+            gauge!(metrics.start_time_seconds.clone()).set(v as f64);
         }
         #[cfg(not(target_os = "windows"))]
         if let Some(v) = m.threads.take() {
-            gauge!(metrics.threads).set(v as f64);
+            gauge!(metrics.threads.clone()).set(v as f64);
         }
     }
 }
