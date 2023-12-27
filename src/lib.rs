@@ -1,5 +1,5 @@
-//! This crate provides [Prometheus][] style [process metrics][] collector of [metrics][] crate for Linux, macOS, and Windows.
-//! Collector code is manually re-written to Rust from an official prometheus client of go ([client_golang][])
+//! This crate provides [Prometheus] style [process metrics] collector of [metrics] crate for Linux, macOS, and Windows.
+//! Collector code is manually re-written to Rust from an official prometheus client of go ([client_golang])
 //!
 //! [Prometheus]: https://prometheus.io/
 //! [process metrics]: https://prometheus.io/docs/instrumenting/writing_clientlibs/#process-metrics
@@ -7,7 +7,7 @@
 //!
 //! # Supported metrics
 //!
-//! This crate supports the following metrics, equal to what official prometheus client of go ([client_golang][]) provides.
+//! This crate supports the following metrics, equal to what official prometheus client of go ([client_golang]) provides.
 //!
 //! | Metric name                        | Help string                                            | Linux | macOS | Windows |
 //! | ---------------------------------- | ------------------------------------------------------ | ----- | ----- | ------- |
@@ -25,7 +25,7 @@
 //!
 //! # Usage
 //!
-//! Use this crate with [metrics-exporter-prometheus][] as an exporter like:
+//! Use this crate with [metrics-exporter-prometheus] as an exporter like:
 //!
 //! [metrics-exporter-prometheus]: https://crates.io/crates/metrics-exporter-prometheus
 //!
@@ -53,15 +53,16 @@
 //! }
 //! ```
 //!
-//! Or with [axum][] (or any web application framework you like) to collect metrics whenever
+//! Or with [axum] (or any web application framework you like) to collect metrics whenever
 //! the `/metrics` endpoint is invoked like:
 //!
 //! [axum]: https://crates.io/crates/axum
 //!
 //! ```no_run
-//! use axum::{routing::get, Router, Server};
+//! use axum::{routing::get, Router};
 //! use metrics_exporter_prometheus::PrometheusBuilder;
 //! use metrics_process::Collector;
+//! use tokio::net::TcpListener;
 //!
 //! #[tokio::main]
 //! async fn main() {
@@ -74,7 +75,6 @@
 //!     // Call `describe()` method to register help string.
 //!     collector.describe();
 //!
-//!     let addr = "127.0.0.1:9000".parse().unwrap();
 //!     let app = Router::new().route(
 //!         "/metrics",
 //!         get(move || {
@@ -83,19 +83,18 @@
 //!             std::future::ready(handle.render())
 //!         }),
 //!     );
-//!     Server::bind(&addr)
-//!         .serve(app.into_make_service())
-//!         .await
-//!         .unwrap();
+//!     let listener = TcpListener::bind("127.0.0.1:3000").await.unwrap();
+//!     axum::serve(listener, app).await.unwrap();
 //! }
 //! ```
 //!
-//! # Difference from [metrics-process-promstyle][]
+//! # Difference from [metrics-process-promstyle]
 //!
-//! It seems [metrics-process-promstyle][] only support Linux but this crate (metrics-process) supports Linux, macOS, and Windows.
+//! It seems [metrics-process-promstyle] only support Linux but this crate (metrics-process) supports Linux, macOS, and Windows.
 //! Additionally, this crate supports `process_open_fds` and `process_max_fds` addition to what metrics-process-promstyle supports.
 //!
 //! [metrics-process-promstyle]: https://crates.io/crates/metrics-process-promstyle
+
 mod collector;
 
 use metrics::{describe_gauge, gauge, Unit};
@@ -220,33 +219,30 @@ impl Collector {
         let prefix = &self.prefix;
         let mut m = collector::collect();
         if let Some(v) = m.cpu_seconds_total.take() {
-            gauge!(format!("{}process_cpu_seconds_total", prefix), v);
+            gauge!(format!("{}process_cpu_seconds_total", prefix)).set(v);
         }
         if let Some(v) = m.open_fds.take() {
-            gauge!(format!("{}process_open_fds", prefix), v as f64);
+            gauge!(format!("{}process_open_fds", prefix)).set(v as f64);
         }
         if let Some(v) = m.max_fds.take() {
-            gauge!(format!("{}process_max_fds", prefix), v as f64);
+            gauge!(format!("{}process_max_fds", prefix)).set(v as f64);
         }
         if let Some(v) = m.virtual_memory_bytes.take() {
-            gauge!(format!("{}process_virtual_memory_bytes", prefix), v as f64);
+            gauge!(format!("{}process_virtual_memory_bytes", prefix)).set(v as f64);
         }
         #[cfg(not(target_os = "windows"))]
         if let Some(v) = m.virtual_memory_max_bytes.take() {
-            gauge!(
-                format!("{}process_virtual_memory_max_bytes", prefix),
-                v as f64,
-            );
+            gauge!(format!("{}process_virtual_memory_max_bytes", prefix)).set(v as f64);
         }
         if let Some(v) = m.resident_memory_bytes.take() {
-            gauge!(format!("{}process_resident_memory_bytes", prefix), v as f64);
+            gauge!(format!("{}process_resident_memory_bytes", prefix)).set(v as f64);
         }
         if let Some(v) = m.start_time_seconds.take() {
-            gauge!(format!("{}process_start_time_seconds", prefix), v as f64);
+            gauge!(format!("{}process_start_time_seconds", prefix)).set(v as f64);
         }
         #[cfg(not(target_os = "windows"))]
         if let Some(v) = m.threads.take() {
-            gauge!(format!("{}process_threads", prefix), v as f64);
+            gauge!(format!("{}process_threads", prefix)).set(v as f64);
         }
     }
 }

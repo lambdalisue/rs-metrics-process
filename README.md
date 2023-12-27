@@ -8,8 +8,8 @@
 
 # ⏱ metrics-process
 
-This crate provides [Prometheus][] style [process metrics][] collector of [metrics][] crate for Linux, macOS, and Windows.
-Collector code is manually re-written to Rust from an official prometheus client of go ([client_golang][])
+This crate provides [Prometheus] style [process metrics] collector of [metrics] crate for Linux, macOS, and Windows.
+Collector code is manually re-written to Rust from an official prometheus client of go ([client_golang])
 
 [prometheus]: https://prometheus.io/
 [process metrics]: https://prometheus.io/docs/instrumenting/writing_clientlibs/#process-metrics
@@ -17,7 +17,7 @@ Collector code is manually re-written to Rust from an official prometheus client
 
 ## Supported metrics
 
-This crate supports the following metrics, equal to what official prometheus client of go ([client_golang][]) provides.
+This crate supports the following metrics, equal to what official prometheus client of go ([client_golang]) provides.
 
 | Metric name                        | Help string                                            | Linux | macOS | Windows |
 | ---------------------------------- | ------------------------------------------------------ | ----- | ----- | ------- |
@@ -35,7 +35,7 @@ This crate supports the following metrics, equal to what official prometheus cli
 
 ## Usage
 
-Use this crate with [metrics-exporter-prometheus][] as an exporter like:
+Use this crate with [metrics-exporter-prometheus] as an exporter like:
 
 [metrics-exporter-prometheus]: https://crates.io/crates/metrics-exporter-prometheus
 
@@ -63,15 +63,16 @@ loop {
 }
 ```
 
-Or with [axum][] (or any web application framework you like) to collect metrics whenever
+Or with [axum] (or any web application framework you like) to collect metrics whenever
 the `/metrics` endpoint is invoked like:
 
 [axum]: https://crates.io/crates/axum
 
 ```rust
-use axum::{routing::get, Router, Server};
+use axum::{routing::get, Router};
 use metrics_exporter_prometheus::PrometheusBuilder;
 use metrics_process::Collector;
+use tokio::net::TcpListener;
 
 #[tokio::main]
 async fn main() {
@@ -93,16 +94,14 @@ async fn main() {
             std::future::ready(handle.render())
         }),
     );
-    Server::bind(&addr)
-        .serve(app.into_make_service())
-        .await
-        .unwrap();
+    let listener = TcpListener::bind("127.0.0.1:9000").await.unwrap();
+    axum::serve(listener, app).await.unwrap();
 }
 ```
 
-## Difference from [metrics-process-promstyle][]
+## Difference from [metrics-process-promstyle]
 
-It seems [metrics-process-promstyle][] only support Linux but this crate (metrics-process) supports Linux, macOS, and Windows.
+It seems [metrics-process-promstyle] only support Linux but this crate (metrics-process) supports Linux, macOS, and Windows.
 Additionally, this crate supports `process_open_fds` and `process_max_fds` addition to what metrics-process-promstyle supports.
 
 [metrics-process-promstyle]: https://crates.io/crates/metrics-process-promstyle

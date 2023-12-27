@@ -1,6 +1,6 @@
 # with_axum
 
-An example of `metrics-process` crate with [axum][] and [metrics-exporter-prometheus][].
+An example of `metrics-process` crate with [axum] and [metrics-exporter-prometheus].
 
 [axum]: https://crates.io/crates/axum
 [metrics-exporter-prometheus]: https://crates.io/crates/metrics-exporter-prometheus

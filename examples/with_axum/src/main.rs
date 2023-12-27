@@ -1,6 +1,7 @@
-use axum::{routing::get, Router, Server};
+use axum::{routing::get, Router};
 use metrics_exporter_prometheus::PrometheusBuilder;
 use metrics_process::Collector;
+use tokio::net::TcpListener;
 
 #[tokio::main]
 async fn main() {
@@ -13,7 +14,6 @@ async fn main() {
     // Call `describe()` method to register help string.
     collector.describe();
 
-    let addr = "127.0.0.1:9000".parse().unwrap();
     let app = Router::new().route(
         "/metrics",
         get(move || {
@@ -22,8 +22,6 @@ async fn main() {
             std::future::ready(handle.render())
         }),
     );
-    Server::bind(&addr)
-        .serve(app.into_make_service())
-        .await
-        .unwrap();
+    let listener = TcpListener::bind("127.0.0.1:9000").await.unwrap();
+    axum::serve(listener, app).await.unwrap();
 }
