@@ -139,26 +139,9 @@ impl Default for Metrics {
 }
 
 /// Prometheus style process metrics collector
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, Default, PartialEq, Eq, Clone)]
 pub struct Collector {
     metrics: Arc<Metrics>,
-}
-
-impl Default for Collector {
-    /// Create a new Collector instance without prefix. This is the same as
-    /// calling `Collector::new` with an empty string for prefix.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use metrics_process::Collector;
-    /// let collector = Collector::default();
-    /// ```
-    fn default() -> Self {
-        Self {
-            metrics: Arc::default(),
-        }
-    }
 }
 
 impl Collector {
@@ -180,7 +163,7 @@ impl Collector {
     /// ```
     #[deprecated(since = "1.1.0", note = "Use `Collector::new(prefix)`.")]
     pub fn prefix(self, prefix: impl Into<String>) -> Self {
-        drop(self);
+        let _ = self;
         Self::new(prefix.into())
     }
 
