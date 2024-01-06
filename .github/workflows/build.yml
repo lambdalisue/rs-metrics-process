@@ -9,7 +9,7 @@ jobs:
         runner: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/cache@v3
         with:
           path: |
@@ -29,3 +29,32 @@ jobs:
       - name: Test
         run: |
           cargo build --release --all-features
+
+  build-dummy:
+    strategy:
+      matrix:
+        # Targets that this crate does NOT support
+        target: [x86_64-unknown-freebsd]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Update local toolchain
+        run: |
+          rustup update
+          rustup target add ${{ matrix.target }}
+      - name: Toolchain info
+        run: |
+          rustc --version
+          cargo --version --verbose
+      - name: Test
+        run: |
+          cargo build --release --features dummy --target ${{ matrix.target }}

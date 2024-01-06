@@ -48,6 +48,10 @@ Go ([client_golang]) provides.
 | `process_start_time_seconds`       | x     | x     | x       |
 | `process_threads`                  | x     | x     |         |
 
+Please note that if you only need to compile this crate on non-supported
+platforms, you can use the `dummy` feature. Enabling this feature activates a
+dummy collector, which returns an empty `Metrics`.
+
 [client_golang]: https://github.com/prometheus/client_golang
 
 ## Usage
@@ -114,6 +118,14 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 ```
+
+## Features
+
+This crate offers the following features:
+
+| Feature Name | Description                                                                           |
+| ------------ | ------------------------------------------------------------------------------------- |
+| `dummy`      | Enables a dummy collector that returns an empty `Metrics` on non-supported platforms. |
 
 ## Difference from [metrics-process-promstyle]
 
