@@ -13,6 +13,10 @@ keywords = [ "cross-platform", "metrics", "prometheus", "open-metrics", "process
 [package.metadata.docs.rs]
 all-features = true
 
+[features]
+# Enable a `dummy` collector that always return an empty `Metrics` for non supported platforms
+dummy = []
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
