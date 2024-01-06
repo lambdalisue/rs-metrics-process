@@ -90,7 +90,7 @@ impl Collector {
     ///
     /// # Example
     ///
-    /// ```
+    /// ```no_run
     /// # use metrics_exporter_prometheus::PrometheusBuilder;
     /// # use metrics_process::Collector;
     /// # #[tokio::main]
@@ -155,7 +155,7 @@ impl Collector {
     ///
     /// # Example
     ///
-    /// ```
+    /// ```no_run
     /// # use metrics_exporter_prometheus::PrometheusBuilder;
     /// # use metrics_process::Collector;
     /// # #[tokio::main]

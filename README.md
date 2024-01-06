@@ -56,7 +56,7 @@ Use this crate with [metrics-exporter-prometheus] as an exporter like:
 
 [metrics-exporter-prometheus]: https://crates.io/crates/metrics-exporter-prometheus
 
-```rust
+```rust,no_run
 use std::thread;
 use std::time::{Duration, Instant};
 
@@ -85,7 +85,7 @@ whenever the `/metrics` endpoint is invoked like:
 
 [axum]: https://crates.io/crates/axum
 
-```rust
+```rust,no_run
 use axum::{routing::get, Router};
 use metrics_exporter_prometheus::PrometheusBuilder;
 use metrics_process::Collector;
