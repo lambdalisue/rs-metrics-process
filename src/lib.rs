@@ -5,6 +5,9 @@ use std::sync::Arc;
 
 use metrics::{describe_gauge, gauge, Unit};
 
+#[cfg(not(feature = "use-gauge-on-cpu-seconds-total"))]
+use metrics::{counter, describe_counter};
+
 /// Metrics names
 #[derive(Debug, PartialEq, Eq)]
 struct Metrics {
@@ -86,7 +89,7 @@ impl Collector {
         }
     }
 
-    /// Describe available metrics through `describe_gauge!` macro of `metrics` crate.
+    /// Describe available metrics through `describe_counter!` and `describe_gauge!` macro of `metrics` crate.
     ///
     /// # Example
     ///
@@ -107,6 +110,13 @@ impl Collector {
     pub fn describe(&self) {
         let metrics = self.metrics.as_ref();
 
+        #[cfg(not(feature = "use-gauge-on-cpu-seconds-total"))]
+        describe_counter!(
+            Arc::clone(&metrics.cpu_seconds_total),
+            Unit::Seconds,
+            "Total user and system CPU time spent in seconds."
+        );
+        #[cfg(feature = "use-gauge-on-cpu-seconds-total")]
         describe_gauge!(
             Arc::clone(&metrics.cpu_seconds_total),
             Unit::Seconds,
@@ -151,7 +161,7 @@ impl Collector {
         );
     }
 
-    /// Collect metrics and record through `gauge!` macro of `metrics` crate.
+    /// Collect metrics and record through `counter!` and `gauge!` macro of `metrics` crate.
     ///
     /// # Example
     ///
@@ -174,6 +184,9 @@ impl Collector {
         let metrics = self.metrics.as_ref();
         let mut m = collector::collect();
         if let Some(v) = m.cpu_seconds_total.take() {
+            #[cfg(not(feature = "use-gauge-on-cpu-seconds-total"))]
+            counter!(Arc::clone(&metrics.cpu_seconds_total)).absolute(v as u64);
+            #[cfg(feature = "use-gauge-on-cpu-seconds-total")]
             gauge!(Arc::clone(&metrics.cpu_seconds_total)).set(v);
         }
         if let Some(v) = m.open_fds.take() {
