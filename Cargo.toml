@@ -8,7 +8,13 @@ description = "Cross-platform Prometheus style process metrics collector of metr
 repository = "https://github.com/lambdalisue/rs-metrics-process"
 license = "MIT"
 readme = "README.md"
-keywords = [ "cross-platform", "metrics", "prometheus", "open-metrics", "process", ]
+keywords = [
+  "cross-platform",
+  "metrics",
+  "prometheus",
+  "open-metrics",
+  "process",
+]
 
 [package.metadata.docs.rs]
 all-features = true
@@ -16,6 +22,10 @@ all-features = true
 [features]
 # Enable a `dummy` collector that always return an empty `Metrics` for non supported platforms
 dummy = []
+# Use a Gauge on `process_cpu_seconds_total` metrics instead of Counter to represent f64 value.
+# This is a previous behavior prior to version 1.3.0.
+# See https://github.com/lambdalisue/rs-metrics-process/issues/44 for more details.
+use-gauge-on-cpu-seconds-total = []
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

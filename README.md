@@ -36,6 +36,11 @@ This crate supports the following metrics provided by [Prometheus] for
 For each platform, it is equivalent to what the official Prometheus client for
 Go ([client_golang]) provides.
 
+> [!NOTE]
+>
+> Prior to version 1.3.0, the `process_cpu_seconds_total` metric was Gauge instead of Counter.
+> Enable `use-gauge-on-cpu-seconds-total` feature to use the previous behavior.
+
 | Metric name                        | Linux | macOS | Windows |
 | ---------------------------------- | ----- | ----- | ------- |
 | `process_cpu_seconds_total`        | x     | x     | x       |
@@ -48,9 +53,10 @@ Go ([client_golang]) provides.
 | `process_start_time_seconds`       | x     | x     | x       |
 | `process_threads`                  | x     | x     |         |
 
-Please note that if you only need to compile this crate on non-supported
-platforms, you can use the `dummy` feature. Enabling this feature activates a
-dummy collector, which returns an empty `Metrics`.
+> [!NOTE]
+>
+> If you only need to compile this crate on non-supported platforms, you can use the `dummy` feature.
+> Enabling this feature activates a dummy collector, which returns an empty `Metrics`.
 
 [client_golang]: https://github.com/prometheus/client_golang
 
@@ -123,18 +129,10 @@ async fn main() {
 
 This crate offers the following features:
 
-| Feature Name | Description                                                                           |
-| ------------ | ------------------------------------------------------------------------------------- |
-| `dummy`      | Enables a dummy collector that returns an empty `Metrics` on non-supported platforms. |
-
-## Difference from [metrics-process-promstyle]
-
-It appears that [metrics-process-promstyle] only supports Linux, but this crate
-(metrics-process) supports Linux, macOS, and Windows. Additionally, this crate
-supports `process_open_fds` and `process_max_fds` in addition to what
-metrics-process-promstyle supports.
-
-[metrics-process-promstyle]: https://crates.io/crates/metrics-process-promstyle
+| Feature Name                     | Description                                                                                                                                         |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `dummy`                          | Enables a dummy collector that returns an empty `Metrics` on non-supported platforms.                                                               |
+| `use-gauge-on-cpu-seconds-total` | Use a Gauge on `process_cpu_seconds_total` metrics instead of Counter to represent `f64` value. This is a previous behavior prior to version 1.3.0. |
 
 # License
 
