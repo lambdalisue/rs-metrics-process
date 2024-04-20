@@ -59,6 +59,9 @@ jobs:
       - name: Clippy check
         run: |
           cargo clippy --all-features --all-targets
+      - name: Clippy check (use-gauge-on-cpu-seconds-total)
+        run: |
+          cargo clippy --features use-gauge-on-cpu-seconds-total --all-targets
 
   test:
     strategy:
@@ -91,9 +94,12 @@ jobs:
       - name: Test
         run: |
           cargo llvm-cov --all-features --lcov --output-path lcov.info
+      - name: Test (use-gauge-on-cpu-seconds-total)
+        run: |
+          cargo llvm-cov --features use-gauge-on-cpu-seconds-total --lcov --output-path lcov.use-gauge-on-cpu-seconds-total.info
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: lcov.info
+          files: lcov.info,lcov.use-gauge-on-cpu-seconds-total.info
           env_vars: RUNNER
