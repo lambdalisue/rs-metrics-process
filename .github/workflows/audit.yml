@@ -4,16 +4,17 @@ on:
   schedule:
     - cron: "0 10 * * *"
   push:
-    paths:
-      - "**/Cargo.toml"
-      - "**/Cargo.lock"
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   security_audit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/bin/
@@ -31,8 +32,6 @@ jobs:
           rustc --version
           cargo --version --verbose
           cargo audit --version
-      - name: Install cargo-audit
-        run: |
       - name: Audit check
         run: |
           cargo audit
