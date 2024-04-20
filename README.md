@@ -127,14 +127,6 @@ This crate offers the following features:
 | ------------ | ------------------------------------------------------------------------------------- |
 | `dummy`      | Enables a dummy collector that returns an empty `Metrics` on non-supported platforms. |
 
-## Difference from [metrics-process-promstyle]
-
-It appears that [metrics-process-promstyle] only supports Linux, but this crate
-(metrics-process) supports Linux, macOS, and Windows. Additionally, this crate
-supports `process_open_fds` and `process_max_fds` in addition to what
-metrics-process-promstyle supports.
-
-[metrics-process-promstyle]: https://crates.io/crates/metrics-process-promstyle
 
 # License
 
