@@ -38,7 +38,7 @@ Go ([client_golang]) provides.
 
 > [!NOTE]
 >
-> Prior to version 1.3.0, the `process_cpu_seconds_total` metric was Gauge instead of Counter.
+> Prior to version 2.0.0, the `process_cpu_seconds_total` metric was Gauge instead of Counter.
 > Enable `use-gauge-on-cpu-seconds-total` feature to use the previous behavior.
 
 | Metric name                        | Linux | macOS | Windows |
@@ -132,7 +132,7 @@ This crate offers the following features:
 | Feature Name                     | Description                                                                                                                                         |
 | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `dummy`                          | Enables a dummy collector that returns an empty `Metrics` on non-supported platforms.                                                               |
-| `use-gauge-on-cpu-seconds-total` | Use a Gauge on `process_cpu_seconds_total` metrics instead of Counter to represent `f64` value. This is a previous behavior prior to version 1.3.0. |
+| `use-gauge-on-cpu-seconds-total` | Use a Gauge on `process_cpu_seconds_total` metrics instead of Counter to represent `f64` value. This is a previous behavior prior to version 2.0.0. |
 
 # License
 
