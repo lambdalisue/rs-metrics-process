@@ -103,3 +103,25 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: lcov.info,lcov.use-gauge-on-cpu-seconds-total.info
           env_vars: RUNNER
+
+  test-cross-platform-freebsd:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Cross-platform test
+        uses: cross-platform-actions/action@v0.25.0
+        with:
+          operating_system: freebsd
+          version: '14.1'
+          run: |
+            sudo pkg update && sudo pkg install -y rust cmake rust-bindgen-cli
+            cargo test
