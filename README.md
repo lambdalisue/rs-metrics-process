@@ -8,8 +8,8 @@
 # ⏱ metrics-process
 
 This crate provides a [Prometheus]-style [process metrics] collector for the
-[metrics] crate, supporting Linux, macOS, and Windows. The collector code is
-manually rewritten in Rust from the official Prometheus client for Go
+[metrics] crate, supporting Linux, macOS, Windows, and FreeBSD. The collector
+code is manually rewritten in Rust from the official Prometheus client for Go
 ([client_golang]).
 
 [Prometheus]: https://prometheus.io/
@@ -41,17 +41,17 @@ Go ([client_golang]) provides.
 > Prior to version 2.0.0, the `process_cpu_seconds_total` metric was Gauge instead of Counter.
 > Enable `use-gauge-on-cpu-seconds-total` feature to use the previous behavior.
 
-| Metric name                        | Linux | macOS | Windows |
-| ---------------------------------- | ----- | ----- | ------- |
-| `process_cpu_seconds_total`        | x     | x     | x       |
-| `process_open_fds`                 | x     | x     | x       |
-| `process_max_fds`                  | x     | x     | x       |
-| `process_virtual_memory_bytes`     | x     | x     | x       |
-| `process_virtual_memory_max_bytes` | x     | x     |         |
-| `process_resident_memory_bytes`    | x     | x     | x       |
-| `process_heap_bytes`               |       |       |         |
-| `process_start_time_seconds`       | x     | x     | x       |
-| `process_threads`                  | x     | x     |         |
+| Metric name                        | Linux | macOS | Windows | FreeBSD |
+| ---------------------------------- | ----- | ----- | ------- | ------- |
+| `process_cpu_seconds_total`        | x     | x     | x       | x       |
+| `process_open_fds`                 | x     | x     | x       | x       |
+| `process_max_fds`                  | x     | x     | x       | x       |
+| `process_virtual_memory_bytes`     | x     | x     | x       | x       |
+| `process_virtual_memory_max_bytes` | x     | x     |         | x       |
+| `process_resident_memory_bytes`    | x     | x     | x       | x       |
+| `process_heap_bytes`               |       |       |         |         |
+| `process_start_time_seconds`       | x     | x     | x       | x       |
+| `process_threads`                  | x     | x     |         | x       |
 
 > [!NOTE]
 >
