@@ -1,13 +1,19 @@
 #[cfg_attr(target_os = "macos", path = "collector/macos.rs")]
 #[cfg_attr(target_os = "linux", path = "collector/linux.rs")]
 #[cfg_attr(target_os = "windows", path = "collector/windows.rs")]
+#[cfg_attr(target_os = "freebsd", path = "collector/freebsd.rs")]
 #[allow(unused_attributes)]
 #[cfg_attr(feature = "dummy", path = "collector/dummy.rs")]
 mod collector;
 
 #[cfg(all(
     not(feature = "dummy"),
-    not(any(target_os = "macos", target_os = "linux", target_os = "windows"))
+    not(any(
+        target_os = "macos",
+        target_os = "linux",
+        target_os = "windows",
+        target_os = "freebsd"
+    ))
 ))]
 compile_error!(
     "A feature \"dummy\" must be enabled to compile this crate on non supported platforms."
@@ -52,7 +58,12 @@ mod tests {
         }
     }
 
-    #[cfg(any(target_os = "macos", target_os = "linux", target_os = "windows"))]
+    #[cfg(any(
+        target_os = "macos",
+        target_os = "linux",
+        target_os = "windows",
+        target_os = "freebsd"
+    ))]
     #[test]
     fn test_collect_internal_ok() {
         fibonacci(40);
@@ -73,6 +84,7 @@ mod tests {
     #[cfg(not(target_os = "macos"))]
     #[cfg(not(target_os = "linux"))]
     #[cfg(not(target_os = "windows"))]
+    #[cfg(not(target_os = "freebsd"))]
     #[cfg(feature = "dummy")]
     #[test]
     fn test_collect_internal_ok_dummy() {
