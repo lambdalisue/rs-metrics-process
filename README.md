@@ -8,9 +8,9 @@
 # ⏱ metrics-process
 
 This crate provides a [Prometheus]-style [process metrics] collector for the
-[metrics] crate, supporting Linux, macOS, Windows, and FreeBSD. The collector
-code is manually rewritten in Rust from the official Prometheus client for Go
-([client_golang]).
+[metrics] crate, supporting Linux, macOS, Windows, and FreeBSD. The original
+collector code was manually rewritten in Rust from the official Prometheus
+client for Go ([client_golang]), FreeBSD support was written from scratch.
 
 [Prometheus]: https://prometheus.io/
 [process metrics]: https://prometheus.io/docs/instrumenting/writing_clientlibs/#process-metrics
