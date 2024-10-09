@@ -83,7 +83,6 @@ let collector = Collector::default();
 collector.describe();
 
 loop {
-    let s = Instant::now();
     // Periodically call `collect()` method to update information.
     collector.collect();
     thread::sleep(Duration::from_millis(750));
