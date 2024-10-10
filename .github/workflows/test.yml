@@ -116,7 +116,7 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: freebsd-14.1-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Cross-platform test
         uses: cross-platform-actions/action@v0.25.0
         with:
