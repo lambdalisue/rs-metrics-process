@@ -130,4 +130,4 @@ jobs:
           version: "${{matrix.version}}"
           run: |
             ${{matrix.prepare_cmd}}
-            cargo test
+            cargo test -- --nocapture
