@@ -42,6 +42,9 @@ rlimit = "0.10.0"
 once_cell = "1.13.1"
 procfs = { version = "0.16.0", default-features = false }
 
+[target.'cfg(target_os = "freebsd")'.dependencies]
+libc = "0.2.159"
+
 [target.'cfg(target_os = "windows")'.dependencies.windows]
 version = "0.57.0"
 features = [
