@@ -104,8 +104,14 @@ jobs:
           files: lcov.info,lcov.use-gauge-on-cpu-seconds-total.info
           env_vars: RUNNER
 
-  test-cross-platform-freebsd:
+  test-cross-platform:
+    strategy:
+      matrix:
+        # don't forget to update current os versions, see https://github.com/cross-platform-actions/action?tab=readme-ov-file#supported-platforms
+        include:
+          - { os: freebsd, version: "14.1", prepare_cmd: "sudo pkg install -y rust cmake rust-bindgen-cli" }
     runs-on: ubuntu-latest
+    name: "test (${{matrix.os}}-${{matrix.version}})"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/cache@v4
@@ -116,12 +122,12 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: freebsd-14.1-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{matrix.os}}-${{matrix.version}}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Cross-platform test
         uses: cross-platform-actions/action@v0.25.0
         with:
-          operating_system: freebsd
-          version: '14.1'
+          operating_system: ${{matrix.os}}
+          version: "${{matrix.version}}"
           run: |
-            sudo pkg update && sudo pkg install -y rust cmake rust-bindgen-cli
+            ${{matrix.prepare_cmd}}
             cargo test
