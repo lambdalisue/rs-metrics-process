@@ -110,6 +110,9 @@ jobs:
         # don't forget to update current os versions, see https://github.com/cross-platform-actions/action?tab=readme-ov-file#supported-platforms
         include:
           - { os: freebsd, version: "14.1", prepare_cmd: "sudo pkg install -y rust cmake rust-bindgen-cli" }
+          # 7.6 is not supported by action@v0.25.0 yet
+          - { os: openbsd, version: "7.5", prepare_cmd: "sudo pkg_add rust cmake llvm%17; export LIBCLANG_PATH=/usr/local/llvm17/lib" }
+      fail-fast: false
     runs-on: ubuntu-latest
     name: "test (${{matrix.os}}-${{matrix.version}})"
     steps:
