@@ -45,6 +45,9 @@ procfs = { version = "0.17.0", default-features = false }
 [target.'cfg(target_os = "freebsd")'.dependencies]
 libc = "0.2.159"
 
+[target.'cfg(target_os = "openbsd")'.dependencies]
+libc = "0.2.159"
+
 [target.'cfg(target_os = "windows")'.dependencies.windows]
 version = "0.58.0"
 features = [

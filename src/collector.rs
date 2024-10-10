@@ -2,6 +2,7 @@
 #[cfg_attr(target_os = "linux", path = "collector/linux.rs")]
 #[cfg_attr(target_os = "windows", path = "collector/windows.rs")]
 #[cfg_attr(target_os = "freebsd", path = "collector/freebsd.rs")]
+#[cfg_attr(target_os = "openbsd", path = "collector/openbsd.rs")]
 #[allow(unused_attributes)]
 #[cfg_attr(feature = "dummy", path = "collector/dummy.rs")]
 mod collector;
@@ -12,7 +13,8 @@ mod collector;
         target_os = "macos",
         target_os = "linux",
         target_os = "windows",
-        target_os = "freebsd"
+        target_os = "freebsd",
+        target_os = "openbsd"
     ))
 ))]
 compile_error!(
@@ -81,10 +83,29 @@ mod tests {
         assert_matches!(m.threads, Some(_));
     }
 
+    #[cfg(target_os = "openbsd")]
+    #[test]
+    fn test_collect_internal_ok_openbsd() {
+        // TODO: if more metrics is implemented for OpenBSD, merge this test into
+        // test_collect_internal_ok
+        fibonacci(40);
+        let m = collect();
+        dbg!(&m);
+        assert_matches!(m.cpu_seconds_total, Some(_));
+        assert_matches!(m.open_fds, None);
+        assert_matches!(m.max_fds, Some(_));
+        assert_matches!(m.virtual_memory_bytes, None);
+        assert_matches!(m.virtual_memory_max_bytes, None);
+        assert_matches!(m.resident_memory_bytes, Some(_));
+        assert_matches!(m.start_time_seconds, Some(_));
+        assert_matches!(m.threads, None);
+    }
+
     #[cfg(not(target_os = "macos"))]
     #[cfg(not(target_os = "linux"))]
     #[cfg(not(target_os = "windows"))]
     #[cfg(not(target_os = "freebsd"))]
+    #[cfg(not(target_os = "openbsd"))]
     #[cfg(feature = "dummy")]
     #[test]
     fn test_collect_internal_ok_dummy() {
