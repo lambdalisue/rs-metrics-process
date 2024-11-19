@@ -1,9 +1,22 @@
+//! Raw metrics for the running process.
+//!
+//! This module contains the implementation to collect the Prometheus metrics for the
+//! running process.  This can be useful to export these metrics via custom mechanisms
+//! rather than via the [metrics] crate.
+//!
+//! Use the [`collect`] function to create a snapshot of the current metrics.
+//!
+//! To export these metrics via the [metrics] crate however it is recommended to use the
+//! [`Collector`] struct.
+//!
+//! [`Collector`]: crate::Collector
+
 #[cfg_attr(target_os = "macos", path = "collector/macos.rs")]
 #[cfg_attr(target_os = "linux", path = "collector/linux.rs")]
 #[cfg_attr(target_os = "windows", path = "collector/windows.rs")]
 #[cfg_attr(target_os = "freebsd", path = "collector/freebsd.rs")]
 #[cfg_attr(target_os = "openbsd", path = "collector/openbsd.rs")]
-#[allow(unused_attributes)]
+#[allow(unused_attributes, clippy::module_inception)]
 #[cfg_attr(feature = "dummy", path = "collector/dummy.rs")]
 mod collector;
 
@@ -21,10 +34,18 @@ compile_error!(
     "A feature \"dummy\" must be enabled to compile this crate on non supported platforms."
 );
 
+/// Creates a snapshot of the running process' [`Metrics`].
+///
+/// Creates a new instance of [`Metrics`] with the current values of the running process.
 pub use collector::collect;
 
-/// Process metrics
-/// https://prometheus.io/docs/instrumenting/writing_clientlibs/#process-metrics
+/// Standard Prometheus process metrics.
+///
+/// This struct describes the standard set of Prometheus process metrics as described at
+/// <https://prometheus.io/docs/instrumenting/writing_clientlibs/#process-metrics>.
+///
+/// To create a populated struct for the running process use the [`collect`] function.  The
+/// `Default` impl does not populate any metrics.
 #[derive(Debug, Default, PartialEq)]
 pub struct Metrics {
     /// Total user and system CPU time spent in seconds.
@@ -32,11 +53,13 @@ pub struct Metrics {
     /// Number of open file descriptors.
     pub open_fds: Option<u64>,
     /// Maximum number of open file descriptors.
+    ///
     /// 0 indicates 'unlimited'.
     pub max_fds: Option<u64>,
     /// Virtual memory size in bytes.
     pub virtual_memory_bytes: Option<u64>,
     /// Maximum amount of virtual memory available in bytes.
+    ///
     /// 0 indicates 'unlimited'.
     pub virtual_memory_max_bytes: Option<u64>,
     /// Resident memory size in bytes.

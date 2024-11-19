@@ -37,7 +37,7 @@ This crate supports the following metrics provided by [Prometheus] for
 For each platform, it is equivalent to what the official Prometheus client for
 Go ([client_golang]) provides.
 
-> [!NOTE]
+> NOTE
 >
 > Prior to version 2.0.0, the `process_cpu_seconds_total` metric was Gauge instead of Counter.
 > Enable `use-gauge-on-cpu-seconds-total` feature to use the previous behavior.
@@ -54,7 +54,7 @@ Go ([client_golang]) provides.
 | `process_start_time_seconds`       | x     | x     | x       | x       | x       |
 | `process_threads`                  | x     | x     |         | x       |         |
 
-> [!NOTE]
+> NOTE
 >
 > If you only need to compile this crate on non-supported platforms, you can use the `dummy` feature.
 > Enabling this feature activates a dummy collector, which returns an empty `Metrics`.
@@ -129,10 +129,11 @@ async fn main() {
 
 This crate offers the following features:
 
-| Feature Name                     | Description                                                                                                                                         |
-| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `dummy`                          | Enables a dummy collector that returns an empty `Metrics` on non-supported platforms.                                                               |
-| `use-gauge-on-cpu-seconds-total` | Use a Gauge on `process_cpu_seconds_total` metrics instead of Counter to represent `f64` value. This is a previous behavior prior to version 2.0.0. |
+| Feature Name                      | Description                                                                                                                                         |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `dummy`                           | Enables a dummy collector that returns an empty `Metrics` on non-supported platforms.                                                               |
+| `use-gauge-on-cpu-seconds-total`  | Use a Gauge on `process_cpu_seconds_total` metrics instead of Counter to represent `f64` value. This is a previous behavior prior to version 2.0.0. |
+| `metrics-rs` (enabled by default) | Enables the [metrics] integration. Can be removed to reduce dependencies if unused.
 
 # License
 
