@@ -16,9 +16,9 @@
 #[cfg_attr(target_os = "windows", path = "collector/windows.rs")]
 #[cfg_attr(target_os = "freebsd", path = "collector/freebsd.rs")]
 #[cfg_attr(target_os = "openbsd", path = "collector/openbsd.rs")]
-#[allow(unused_attributes, clippy::module_inception)]
+#[allow(unused_attributes)]
 #[cfg_attr(feature = "dummy", path = "collector/dummy.rs")]
-mod collector;
+mod implementation;
 
 #[cfg(all(
     not(feature = "dummy"),
@@ -37,7 +37,7 @@ compile_error!(
 /// Creates a snapshot of the running process' [`Metrics`].
 ///
 /// Creates a new instance of [`Metrics`] with the current values of the running process.
-pub use collector::collect;
+pub use implementation::collect;
 
 /// Standard Prometheus process metrics.
 ///
