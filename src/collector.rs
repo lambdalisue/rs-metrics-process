@@ -11,13 +11,13 @@
 //!
 //! [`Collector`]: crate::Collector
 
-#[cfg_attr(target_os = "macos", path = "collector/macos.rs")]
-#[cfg_attr(target_os = "linux", path = "collector/linux.rs")]
-#[cfg_attr(target_os = "windows", path = "collector/windows.rs")]
-#[cfg_attr(target_os = "freebsd", path = "collector/freebsd.rs")]
-#[cfg_attr(target_os = "openbsd", path = "collector/openbsd.rs")]
+#[cfg_attr(target_os = "macos", path = "implementation/macos.rs")]
+#[cfg_attr(target_os = "linux", path = "implementation/linux.rs")]
+#[cfg_attr(target_os = "windows", path = "implementation/windows.rs")]
+#[cfg_attr(target_os = "freebsd", path = "implementation/freebsd.rs")]
+#[cfg_attr(target_os = "openbsd", path = "implementation/openbsd.rs")]
 #[allow(unused_attributes)]
-#[cfg_attr(feature = "dummy", path = "collector/dummy.rs")]
+#[cfg_attr(feature = "dummy", path = "implementation/dummy.rs")]
 mod implementation;
 
 #[cfg(all(
