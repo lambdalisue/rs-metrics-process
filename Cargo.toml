@@ -20,6 +20,9 @@ keywords = [
 all-features = true
 
 [features]
+default = ["metrics-rs"]
+# Enable the metrics-rs collector integration.
+metrics-rs = ["dep:metrics"]
 # Enable a `dummy` collector that always return an empty `Metrics` for non supported platforms
 dummy = []
 # Use a Gauge on `process_cpu_seconds_total` metrics instead of Counter to represent f64 value.
@@ -30,7 +33,7 @@ use-gauge-on-cpu-seconds-total = []
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-metrics = "0.24.0"
+metrics = { version = "0.24.0", optional = true }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 libproc = "0.14.2"

@@ -131,10 +131,11 @@ async fn main() {
 
 This crate offers the following features:
 
-| Feature Name                     | Description                                                                                                                                         |
-| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `dummy`                          | Enables a dummy collector that returns an empty `Metrics` on non-supported platforms.                                                               |
-| `use-gauge-on-cpu-seconds-total` | Use a Gauge on `process_cpu_seconds_total` metrics instead of Counter to represent `f64` value. This is a previous behavior prior to version 2.0.0. |
+| Feature Name                      | Description                                                                                                                                         |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `dummy`                           | Enables a dummy collector that returns an empty `Metrics` on non-supported platforms.                                                               |
+| `use-gauge-on-cpu-seconds-total`  | Use a Gauge on `process_cpu_seconds_total` metrics instead of Counter to represent `f64` value. This is a previous behavior prior to version 2.0.0. |
+| `metrics-rs` (enabled by default) | Enables the [metrics] integration. Can be removed to reduce dependencies if unused.
 
 # License
 

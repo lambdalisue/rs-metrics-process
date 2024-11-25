@@ -1,14 +1,20 @@
 #![doc = include_str!("../README.md")]
-mod collector;
+pub mod collector;
 
+#[cfg(feature = "metrics-rs")]
 use std::sync::Arc;
 
+#[cfg(feature = "metrics-rs")]
 use metrics::{describe_gauge, gauge, Unit};
 
-#[cfg(not(feature = "use-gauge-on-cpu-seconds-total"))]
+#[cfg(all(
+    feature = "metrics-rs",
+    not(feature = "use-gauge-on-cpu-seconds-total")
+))]
 use metrics::{counter, describe_counter};
 
 /// Metrics names
+#[cfg(feature = "metrics-rs")]
 #[derive(Debug, PartialEq, Eq)]
 struct Metrics {
     cpu_seconds_total: Arc<str>,
@@ -21,6 +27,7 @@ struct Metrics {
     threads: Arc<str>,
 }
 
+#[cfg(feature = "metrics-rs")]
 impl Metrics {
     // Create new Metrics, allocating prefixed strings for metrics names.
     fn new(prefix: impl AsRef<str>) -> Self {
@@ -38,6 +45,7 @@ impl Metrics {
     }
 }
 
+#[cfg(feature = "metrics-rs")]
 impl Default for Metrics {
     // Create new Metrics, without prefixing and thus allocating.
     fn default() -> Self {
@@ -45,12 +53,17 @@ impl Default for Metrics {
     }
 }
 
-/// Prometheus style process metrics collector
+/// Prometheus style process metrics collector for the [metrics] crate.
+///
+/// This is a collector which will directly export the metrics to the registered [metrics]
+/// collector.
+#[cfg(feature = "metrics-rs")]
 #[derive(Debug, Default, PartialEq, Eq, Clone)]
 pub struct Collector {
     metrics: Arc<Metrics>,
 }
 
+#[cfg(feature = "metrics-rs")]
 impl Collector {
     /// Add an prefix that is prepended to metric keys.
     /// # Examples
