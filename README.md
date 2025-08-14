@@ -29,7 +29,6 @@ This crate supports the following metrics provided by [Prometheus] for
 | `process_virtual_memory_bytes`     | Virtual memory size in bytes.                              |
 | `process_virtual_memory_max_bytes` | Maximum amount of virtual memory available in bytes.       |
 | `process_resident_memory_bytes`    | Resident memory size in bytes.                             |
-| `process_heap_bytes`               | Process heap size in bytes.                                |
 | `process_start_time_seconds`       | Start time of the process since the Unix epoch in seconds. |
 | `process_threads`                  | Number of OS threads in the process.                       |
 
@@ -51,7 +50,6 @@ tested and we cannot guarantee its correctness.
 | `process_virtual_memory_bytes`     | x     | x     | x       | x       |           |
 | `process_virtual_memory_max_bytes` | x     | x     |         | x       |           |
 | `process_resident_memory_bytes`    | x     | x     | x       | x       | x         |
-| `process_heap_bytes`               |       |       |         |         |           |
 | `process_start_time_seconds`       | x     | x     | x       | x       | x         |
 | `process_threads`                  | x     | x     |         | x       |           |
 
